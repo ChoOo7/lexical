@@ -64,13 +64,13 @@ export const calculateNextFontSize = (
           updatedFontSize = MAX_ALLOWED_FONT_SIZE;
           break;
         case currentFontSize >= 48:
-          updatedFontSize -= 12;
+          updatedFontSize -= 2;
           break;
         case currentFontSize >= 24:
-          updatedFontSize -= 4;
+          updatedFontSize -= 2;
           break;
         case currentFontSize >= 14:
-          updatedFontSize -= 2;
+          updatedFontSize -= 1;
           break;
         case currentFontSize >= 9:
           updatedFontSize -= 1;
@@ -90,13 +90,13 @@ export const calculateNextFontSize = (
           updatedFontSize += 1;
           break;
         case currentFontSize < 20:
-          updatedFontSize += 2;
+          updatedFontSize += 1;
           break;
         case currentFontSize < 36:
-          updatedFontSize += 4;
+          updatedFontSize += 2;
           break;
         case currentFontSize <= 60:
-          updatedFontSize += 12;
+          updatedFontSize += 2;
           break;
         default:
           updatedFontSize = MAX_ALLOWED_FONT_SIZE;

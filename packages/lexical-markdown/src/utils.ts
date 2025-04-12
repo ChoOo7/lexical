@@ -35,6 +35,7 @@ type MarkdownFormatKind =
   | 'paragraphH4'
   | 'paragraphH5'
   | 'paragraphH6'
+  | 'paragraphH7'
   | 'paragraphBlockQuote'
   | 'paragraphUnorderedList'
   | 'paragraphOrderedList'
@@ -123,6 +124,13 @@ const markdownHeader6: MarkdownCriteria = {
   ...paragraphStartBase,
   export: createHeadingExport(6),
   markdownFormatKind: 'paragraphH6',
+  regEx: /^(?:###### )/,
+  regExForAutoFormatting: /^(?:###### )/,
+};
+const markdownHeader7: MarkdownCriteria = {
+  ...paragraphStartBase,
+  export: createHeadingExport(7),
+  markdownFormatKind: 'paragraphH7',
   regEx: /^(?:###### )/,
   regExForAutoFormatting: /^(?:###### )/,
 };

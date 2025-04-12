@@ -115,6 +115,7 @@ export type EditorThemeClasses = {
     h4?: EditorThemeClassName;
     h5?: EditorThemeClassName;
     h6?: EditorThemeClassName;
+    h7?: EditorThemeClassName;
   };
   hr?: EditorThemeClassName;
   hrSelected?: EditorThemeClassName;

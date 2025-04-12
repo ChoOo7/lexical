@@ -86,15 +86,21 @@ function isSVG(src: string): boolean {
 function LazyImage({
   altText,
   className,
+  otherClassName,
   imageRef,
+  imgRounded,
   src,
   width,
   height,
+  title,
   maxWidth,
   onError,
 }: {
   altText: string;
   className: string | null;
+  title: string | null;
+  imgRounded: boolean | null;
+  otherClassName: string | null;
   height: 'inherit' | number;
   imageRef: {current: null | HTMLImageElement};
   maxWidth: number;
@@ -163,11 +169,13 @@ function LazyImage({
 
   return (
     <img
-      className={className || undefined}
+      className={`${otherClassName ? otherClassName : ''} ${className ? className : ''}`}
+      title={title || undefined}
       src={src}
       alt={altText}
       ref={imageRef}
       style={imageStyle}
+      data-rounded={imgRounded ? "1" : "0"}
       onError={onError}
       draggable="false"
       onLoad={(e) => {
@@ -206,8 +214,12 @@ export default function ImageComponent({
   maxWidth,
   resizable,
   showCaption,
+  imgRounded,
+  imgZoomable,
   caption,
   captionsEnabled,
+  title,
+  className
 }: {
   altText: string;
   caption: LexicalEditor;
@@ -215,13 +227,19 @@ export default function ImageComponent({
   maxWidth: number;
   nodeKey: NodeKey;
   resizable: boolean;
-  showCaption: boolean;
+  showCaption: boolean;  
+  imgRounded: boolean;
+  imgZoomable: boolean;
   src: string;
   width: 'inherit' | number;
   captionsEnabled: boolean;
+  title?: string;
+  className?: string;
 }): JSX.Element {
   const imageRef = useRef<null | HTMLImageElement>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
+  const buttonRoundRef = useRef<HTMLButtonElement | null>(null);
+  const buttonZoomRef = useRef<HTMLButtonElement | null>(null);
   const [isSelected, setSelected, clearSelection] =
     useLexicalNodeSelection(nodeKey);
   const [isResizing, setIsResizing] = useState<boolean>(false);
@@ -402,6 +420,24 @@ export default function ImageComponent({
     });
   };
 
+  const setImgRounded = (rounded: boolean) => {
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+      if ($isImageNode(node)) {
+        node.setImgRounded(rounded);
+      }
+    });
+  };
+
+  const setImgZoomable = (zoomable: boolean) => {
+    editor.update(() => {
+      const node = $getNodeByKey(nodeKey);
+      if ($isImageNode(node)) {
+        node.setImgZoomable(zoomable);
+      }
+    });
+  };
+
   const onResizeEnd = (
     nextWidth: 'inherit' | number,
     nextHeight: 'inherit' | number,
@@ -438,17 +474,21 @@ export default function ImageComponent({
             <BrokenImage />
           ) : (
             <LazyImage
+              otherClassName={className ?? ''}
               className={
+                
                 isFocused
                   ? `focused ${$isNodeSelection(selection) ? 'draggable' : ''}`
                   : null
               }
               src={src}
               altText={altText}
+              title={title ?? ""}
               imageRef={imageRef}
               width={width}
               height={height}
               maxWidth={maxWidth}
+              imgRounded={imgRounded}
               onError={() => setIsLoadError(true)}
             />
           )}
@@ -490,8 +530,14 @@ export default function ImageComponent({
           <ImageResizer
             showCaption={showCaption}
             setShowCaption={setShowCaption}
+            imgRounded={imgRounded}
+            setImgRounded={setImgRounded}
+            imgZoomable={imgZoomable}
+            setImgZoomable={setImgZoomable}
             editor={editor}
             buttonRef={buttonRef}
+            buttonRoundRef={buttonRoundRef}
+            buttonZoomRef={buttonZoomRef}
             imageRef={imageRef}
             maxWidth={maxWidth}
             onResizeStart={onResizeStart}

@@ -15,9 +15,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #eee;
-  padding: 0 20px;
+  padding: 0;
 }
-
+#root {
+  
+  width: 100vw;
+  height: 100vh;
+}
 header {
   max-width: 580px;
   margin: auto;
@@ -46,9 +50,10 @@ header h1 {
 }
 
 .editor-shell {
-  margin: 20px auto;
+  margin: 0;
   border-radius: 2px;
-  max-width: 1100px;
+  width: 100vw;
+  height: 100vh;
   color: #000;
   position: relative;
   line-height: 1.7;
@@ -61,6 +66,7 @@ header h1 {
   display: block;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  margin-top:40px;
 }
 
 .editor-shell .editor-container.tree-view {
@@ -73,7 +79,6 @@ header h1 {
 }
 
 .editor-scroller {
-  min-height: 150px;
   max-width: 100%;
   border: 0;
   display: flex;
@@ -81,6 +86,8 @@ header h1 {
   outline: 0;
   z-index: 0;
   resize: vertical;
+  
+  min-height: calc(100vh - 45px);
 }
 
 .editor {
@@ -207,6 +214,7 @@ pre::-webkit-scrollbar-thumb {
   position: fixed;
   left: 20px;
   bottom: 20px;
+  display: none;
 }
 
 #test-recorder-button {
@@ -762,6 +770,8 @@ i.page-break,
   border-radius: 8px;
   min-height: 40px;
   background-color: #fff;
+  max-height: 40vh;
+  overflow: auto;
 }
 
 .dropdown .item {
@@ -779,7 +789,7 @@ i.page-break,
   background-color: #fff;
   border-radius: 8px;
   border: 0;
-  max-width: 250px;
+  max-width: 450px;
   min-width: 100px;
 }
 
@@ -890,6 +900,9 @@ i.page-break,
 
 .icon.h6 {
   background-image: url(images/icons/type-h6.svg);
+}
+.icon.h7 {
+  background-image: url(images/icons/type-h7.svg);
 }
 
 .icon.bullet-list,
@@ -1008,8 +1021,12 @@ i.page-break,
 }
 
 .editor-shell .editor-image img {
-  max-width: 100%;
+  max-width: 100% !important;
   cursor: default;
+}
+
+.editor-shell .editor-image img[data-rounded="1"] {
+  border-radius: 20px;
 }
 
 .editor-shell .editor-image img.focused {
@@ -1045,12 +1062,29 @@ i.page-break,
   overflow: hidden;
 }
 
-.editor-shell .editor-image .image-caption-button {
+
+.editor-shell .editor-image .image-container-button {
   display: block;
   position: absolute;
   bottom: 20px;
   left: 0;
   right: 0;
+  width: 100%;
+  
+  text-align: center;
+}
+
+.editor-shell .editor-image .image-caption-button,
+.editor-shell .editor-image .image-round-button,
+.editor-shell .editor-image .image-zoom-button 
+{
+  display: inline-block;
+  /*
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  */
   width: 30%;
   padding: 10px;
   margin: 0 auto;
@@ -1499,7 +1533,7 @@ button.action-button:disabled {
   vertical-align: middle;
   overflow: auto;
   height: 36px;
-  position: sticky;
+  position: fixed;
   top: 0;
   z-index: 2;
   overflow-y: hidden; /* disable vertical scroll*/

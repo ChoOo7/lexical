@@ -24,8 +24,8 @@
 }
 .Modal__modal {
   padding: 20px;
-  min-height: 100px;
-  min-width: 300px;
+  min-height: 150px;
+  min-width: 450px;
   display: flex;
   flex-grow: 0px;
   background-color: #fff;

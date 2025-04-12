@@ -20,8 +20,10 @@ const require = createRequire(import.meta.url);
 
 // https://vitejs.dev/config/
 export default defineConfig(({mode}) => ({
+  base: '/lexical/', // <-- ici tu changes le chemin de base
   build: {
     outDir: 'build',
+    
     rollupOptions: {
       input: {
         main: new URL('./index.html', import.meta.url).pathname,

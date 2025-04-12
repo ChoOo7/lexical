@@ -46,9 +46,13 @@ export interface ImagePayload {
   key?: NodeKey;
   maxWidth?: number;
   showCaption?: boolean;
+  imgRounded?: boolean;
+  imgZoomable?: boolean;
   src: string;
   width?: number;
   captionsEnabled?: boolean;
+  title?: string;
+  className?: string;
 }
 
 function isGoogleDocCheckboxImg(img: HTMLImageElement): boolean {
@@ -65,8 +69,8 @@ function $convertImageElement(domNode: Node): null | DOMConversionOutput {
   if (img.src.startsWith('file:///') || isGoogleDocCheckboxImg(img)) {
     return null;
   }
-  const {alt: altText, src, width, height} = img;
-  const node = $createImageNode({altText, height, src, width});
+  const {alt: altText, src, width, height, className} = img;
+  const node = $createImageNode({altText, height, src, width, className});
   return {node};
 }
 
@@ -77,8 +81,12 @@ export type SerializedImageNode = Spread<
     height?: number;
     maxWidth: number;
     showCaption: boolean;
+    imgRounded: boolean;
+    imgZoomable: boolean;
     src: string;
     width?: number;
+    title: string;
+    className: string;
   },
   SerializedLexicalNode
 >;
@@ -90,9 +98,13 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   __height: 'inherit' | number;
   __maxWidth: number;
   __showCaption: boolean;
+  __imgRounded: boolean;
+  __imgZoomable: boolean;
   __caption: LexicalEditor;
   // Captions cannot yet be used within editor cells
   __captionsEnabled: boolean;
+  __title?: string;
+  __className?: string;
 
   static getType(): string {
     return 'image';
@@ -106,21 +118,29 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
       node.__width,
       node.__height,
       node.__showCaption,
+      node.__imgRounded,
+      node.__imgZoomable,
       node.__caption,
       node.__captionsEnabled,
       node.__key,
+      node.__title,
+      node.__className,
     );
   }
 
   static importJSON(serializedNode: SerializedImageNode): ImageNode {
-    const {altText, height, width, maxWidth, src, showCaption} = serializedNode;
+    const {altText, height, width, maxWidth, src, showCaption, imgRounded, imgZoomable, title, className} = serializedNode;
     return $createImageNode({
       altText,
       height,
       maxWidth,
       showCaption,
+      imgRounded,
+      imgZoomable,
       src,
       width,
+      title,
+      className,
     }).updateFromJSON(serializedNode);
   }
 
@@ -142,6 +162,10 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     element.setAttribute('alt', this.__altText);
     element.setAttribute('width', this.__width.toString());
     element.setAttribute('height', this.__height.toString());
+    element.setAttribute('title', this.__title || '');
+    element.setAttribute('class', this.__className || '');
+    element.setAttribute('data-rounded', this.__imgRounded ? "1" : "0");
+    element.setAttribute('data-zoomable', this.__imgZoomable ? "1" : "0");
     return {element};
   }
 
@@ -161,9 +185,13 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     width?: 'inherit' | number,
     height?: 'inherit' | number,
     showCaption?: boolean,
+    imgRounded?: boolean,
+    imgZoomable?: boolean,
     caption?: LexicalEditor,
     captionsEnabled?: boolean,
     key?: NodeKey,
+    title?: string,
+    className?: string,
   ) {
     super(key);
     this.__src = src;
@@ -172,6 +200,8 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
     this.__width = width || 'inherit';
     this.__height = height || 'inherit';
     this.__showCaption = showCaption || false;
+    this.__imgRounded = imgRounded || false;
+    this.__imgZoomable = imgZoomable || false;
     this.__caption =
       caption ||
       createEditor({
@@ -188,6 +218,8 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
         ],
       });
     this.__captionsEnabled = captionsEnabled || captionsEnabled === undefined;
+    this.__title = title;
+    this.__className = className;
   }
 
   exportJSON(): SerializedImageNode {
@@ -198,8 +230,12 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
       height: this.__height === 'inherit' ? 0 : this.__height,
       maxWidth: this.__maxWidth,
       showCaption: this.__showCaption,
+      imgRounded: this.__imgRounded,
+      imgZoomable: this.__imgZoomable,
       src: this.getSrc(),
       width: this.__width === 'inherit' ? 0 : this.__width,
+      title: this.__title || '',
+      className: this.__className || '',
     };
   }
 
@@ -215,6 +251,15 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
   setShowCaption(showCaption: boolean): void {
     const writable = this.getWritable();
     writable.__showCaption = showCaption;
+  }
+  
+  setImgRounded(imgRounded: boolean): void {
+    const writable = this.getWritable();
+    writable.__imgRounded = imgRounded;
+  }
+  setImgZoomable(imgZoomable: boolean): void {
+    const writable = this.getWritable();
+    writable.__imgZoomable = imgZoomable;
   }
 
   // View
@@ -251,8 +296,12 @@ export class ImageNode extends DecoratorNode<JSX.Element> {
         maxWidth={this.__maxWidth}
         nodeKey={this.getKey()}
         showCaption={this.__showCaption}
+        imgRounded={this.__imgRounded}
+        imgZoomable={this.__imgZoomable}
         caption={this.__caption}
         captionsEnabled={this.__captionsEnabled}
+        title={this.__title}
+        className={this.__className}
         resizable={true}
       />
     );
@@ -267,8 +316,12 @@ export function $createImageNode({
   src,
   width,
   showCaption,
+  imgRounded,
+  imgZoomable,
   caption,
   key,
+  title,
+  className
 }: ImagePayload): ImageNode {
   return $applyNodeReplacement(
     new ImageNode(
@@ -278,9 +331,13 @@ export function $createImageNode({
       width,
       height,
       showCaption,
+      imgRounded,
+      imgZoomable,
       caption,
       captionsEnabled,
       key,
+      title,
+      className
     ),
   );
 }

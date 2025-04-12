@@ -64,13 +64,17 @@ export class LayoutContainerNode extends ElementNode {
     if (typeof config.theme.layoutContainer === 'string') {
       addClassNamesToElement(dom, config.theme.layoutContainer);
     }
+    dom.setAttribute('data-grid-template-columns', this.__templateColumns);
     return dom;
   }
 
   exportDOM(): DOMExportOutput {
     const element = document.createElement('div');
     element.style.gridTemplateColumns = this.__templateColumns;
+    var newClassName = 'gridTemplateColumns-'+(this.__templateColumns.replace(' ', '-'));
+    //element.className = element.className + ' ' + newClassName;
     element.setAttribute('data-lexical-layout-container', 'true');
+    element.setAttribute('data-grid-template-columns', this.__templateColumns);
     return {element};
   }
 
@@ -78,6 +82,7 @@ export class LayoutContainerNode extends ElementNode {
     if (prevNode.__templateColumns !== this.__templateColumns) {
       dom.style.gridTemplateColumns = this.__templateColumns;
     }
+    dom.setAttribute('data-grid-template-columns', this.__templateColumns);
     return false;
   }
 

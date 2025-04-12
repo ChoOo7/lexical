@@ -96,6 +96,7 @@ const exampleTheme = {
     h4: 'editor-heading-h4',
     h5: 'editor-heading-h5',
     h6: 'editor-heading-h6',
+    h7: 'editor-heading-h7',
   },
   list: {
     nested: {

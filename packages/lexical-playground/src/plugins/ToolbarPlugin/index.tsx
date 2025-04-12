@@ -18,6 +18,7 @@ import {$isLinkNode, TOGGLE_LINK_COMMAND} from '@lexical/link';
 import {$isListNode, ListNode} from '@lexical/list';
 import {INSERT_EMBED_COMMAND} from '@lexical/react/LexicalAutoEmbedPlugin';
 import {INSERT_HORIZONTAL_RULE_COMMAND} from '@lexical/react/LexicalHorizontalRuleNode';
+import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {$isHeadingNode} from '@lexical/rich-text';
 import {
   $getSelectionStyleValueForProperty,
@@ -74,6 +75,7 @@ import {INSERT_EXCALIDRAW_COMMAND} from '../ExcalidrawPlugin';
 import {
   INSERT_IMAGE_COMMAND,
   InsertImageDialog,
+  InsertImageUriDialogBody,
   InsertImagePayload,
 } from '../ImagesPlugin';
 import {InsertInlineImageDialog} from '../InlineImagePlugin';
@@ -238,6 +240,36 @@ function BlockFormatDropDown({
           <span className="text">Heading 3</span>
         </div>
         <span className="shortcut">{SHORTCUTS.HEADING3}</span>
+      </DropDownItem>
+      <DropDownItem
+        className={'item wide ' + dropDownActiveClass(blockType === 'h4')}
+        onClick={() => formatHeading(editor, blockType, 'h4')}>
+        <div className="icon-text-container">
+          <i className="icon h4" />
+          <span className="text">Heading 4</span>
+        </div>
+      </DropDownItem>
+      <DropDownItem
+        className={'item wide ' + dropDownActiveClass(blockType === 'h5')}
+        onClick={() => formatHeading(editor, blockType, 'h5')}>
+        <div className="icon-text-container">
+          <i className="icon h5" />
+          <span className="text">Heading 5</span>
+        </div>
+      </DropDownItem>
+      <DropDownItem
+        className={'item wide ' + dropDownActiveClass(blockType === 'h6')}
+        onClick={() => formatHeading(editor, blockType, 'h6')}>
+        <div className="icon-text-container">
+          <span className="text">Bouton</span>
+        </div>
+      </DropDownItem>
+      <DropDownItem
+        className={'item wide ' + dropDownActiveClass(blockType === 'h7')}
+        onClick={() => formatHeading(editor, blockType, 'h7')}>
+        <div className="icon-text-container">
+          <span className="text">Definisseur de couleur</span>
+        </div>
       </DropDownItem>
       <DropDownItem
         className={'item wide ' + dropDownActiveClass(blockType === 'bullet')}
@@ -623,6 +655,44 @@ export default function ToolbarPlugin({
       updateToolbarState('isCapitalize', selection.hasFormat('capitalize'));
     }
   }, [activeEditor, editor, updateToolbarState]);
+
+  
+  function useExternalMessages() {
+    const [editor] = useLexicalComposerContext();
+  
+    useEffect(() => {
+      function handleMessage(event: MessageEvent) {
+        const {type, src, className, imgRounded, imgZoomable} = event.data;
+  
+        if (type === 'pictureAdded' && typeof src === 'string') {
+          editor.update(() => {
+            editor.dispatchCommand(INSERT_IMAGE_COMMAND, {
+              altText: '',
+              src: src,
+              className: className,
+              imgRounded, 
+              imgZoomable
+            });
+/*
+            showModal('Insert Image', (onClose) => (
+              <InsertImageUriDialogBody
+                activeEditor={activeEditor}
+                onClose={onClose}
+              />
+            ));
+            */
+          
+            //editor.dispatchCommand(INSERT_IMAGE_COMMAND, {src});
+          });
+        }
+      }
+  
+      window.addEventListener('message', handleMessage);
+      return () => window.removeEventListener('message', handleMessage);
+    }, [editor]);
+  }
+
+  useExternalMessages();
 
   useEffect(() => {
     return editor.registerCommand(
@@ -1019,12 +1089,14 @@ export default function ToolbarPlugin({
           {canViewerSeeInsertDropdown && (
             <>
               <Divider />
+              
               <DropDown
                 disabled={!isEditable}
                 buttonClassName="toolbar-item spaced"
                 buttonLabel="Insert"
                 buttonAriaLabel="Insert specialized editor node"
                 buttonIconClassName="icon plus">
+                {false && (
                 <DropDownItem
                   onClick={() => {
                     activeEditor.dispatchCommand(
@@ -1035,15 +1107,16 @@ export default function ToolbarPlugin({
                   className="item">
                   <i className="icon horizontal-rule" />
                   <span className="text">Horizontal Rule</span>
-                </DropDownItem>
-                <DropDownItem
+                </DropDownItem>)}
+
+                {false && (<DropDownItem
                   onClick={() => {
                     activeEditor.dispatchCommand(INSERT_PAGE_BREAK, undefined);
                   }}
                   className="item">
                   <i className="icon page-break" />
                   <span className="text">Page Break</span>
-                </DropDownItem>
+                </DropDownItem>)}
                 <DropDownItem
                   onClick={() => {
                     showModal('Insert Image', (onClose) => (
@@ -1057,6 +1130,7 @@ export default function ToolbarPlugin({
                   <i className="icon image" />
                   <span className="text">Image</span>
                 </DropDownItem>
+                { false && (
                 <DropDownItem
                   onClick={() => {
                     showModal('Insert Inline Image', (onClose) => (
@@ -1069,7 +1143,8 @@ export default function ToolbarPlugin({
                   className="item">
                   <i className="icon image" />
                   <span className="text">Inline Image</span>
-                </DropDownItem>
+                </DropDownItem>)}
+                { false && (
                 <DropDownItem
                   onClick={() =>
                     insertGifOnClick({
@@ -1080,7 +1155,8 @@ export default function ToolbarPlugin({
                   className="item">
                   <i className="icon gif" />
                   <span className="text">GIF</span>
-                </DropDownItem>
+                </DropDownItem>)}
+                { false && (
                 <DropDownItem
                   onClick={() => {
                     activeEditor.dispatchCommand(
@@ -1091,7 +1167,7 @@ export default function ToolbarPlugin({
                   className="item">
                   <i className="icon diagram-2" />
                   <span className="text">Excalidraw</span>
-                </DropDownItem>
+                </DropDownItem>)}
                 <DropDownItem
                   onClick={() => {
                     showModal('Insert Table', (onClose) => (
@@ -1105,6 +1181,7 @@ export default function ToolbarPlugin({
                   <i className="icon table" />
                   <span className="text">Table</span>
                 </DropDownItem>
+                { false && (
                 <DropDownItem
                   onClick={() => {
                     showModal('Insert Poll', (onClose) => (
@@ -1117,10 +1194,10 @@ export default function ToolbarPlugin({
                   className="item">
                   <i className="icon poll" />
                   <span className="text">Poll</span>
-                </DropDownItem>
+                </DropDownItem>)}
                 <DropDownItem
                   onClick={() => {
-                    showModal('Insert Columns Layout', (onClose) => (
+                    showModal('Insérer un modèle de présentation', (onClose) => (
                       <InsertLayoutDialog
                         activeEditor={activeEditor}
                         onClose={onClose}
@@ -1131,7 +1208,7 @@ export default function ToolbarPlugin({
                   <i className="icon columns" />
                   <span className="text">Columns Layout</span>
                 </DropDownItem>
-
+                { false && (
                 <DropDownItem
                   onClick={() => {
                     showModal('Insert Equation', (onClose) => (
@@ -1144,7 +1221,8 @@ export default function ToolbarPlugin({
                   className="item">
                   <i className="icon equation" />
                   <span className="text">Equation</span>
-                </DropDownItem>
+                </DropDownItem>)}
+                { false && (
                 <DropDownItem
                   onClick={() => {
                     editor.update(() => {
@@ -1156,7 +1234,8 @@ export default function ToolbarPlugin({
                   className="item">
                   <i className="icon sticky" />
                   <span className="text">Sticky Note</span>
-                </DropDownItem>
+                </DropDownItem>)}
+                { false && (
                 <DropDownItem
                   onClick={() => {
                     editor.dispatchCommand(
@@ -1167,7 +1246,7 @@ export default function ToolbarPlugin({
                   className="item">
                   <i className="icon caret-right" />
                   <span className="text">Collapsible container</span>
-                </DropDownItem>
+                </DropDownItem>)}
                 {EmbedConfigs.map((embedConfig) => (
                   <DropDownItem
                     key={embedConfig.type}

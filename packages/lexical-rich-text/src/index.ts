@@ -108,7 +108,7 @@ import {
 
 export type SerializedHeadingNode = Spread<
   {
-    tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+    tag: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'h7';
   },
   SerializedElementNode
 >;
@@ -208,7 +208,7 @@ export function $isQuoteNode(
   return node instanceof QuoteNode;
 }
 
-export type HeadingTagType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+export type HeadingTagType = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'h7';
 
 /** @noInheritDoc */
 export class HeadingNode extends ElementNode {
@@ -279,6 +279,10 @@ export class HeadingNode extends ElementNode {
         priority: 0,
       }),
       h6: (node: Node) => ({
+        conversion: $convertHeadingElement,
+        priority: 0,
+      }),
+      h7: (node: Node) => ({
         conversion: $convertHeadingElement,
         priority: 0,
       }),
@@ -409,7 +413,8 @@ function $convertHeadingElement(element: HTMLElement): DOMConversionOutput {
     nodeName === 'h3' ||
     nodeName === 'h4' ||
     nodeName === 'h5' ||
-    nodeName === 'h6'
+    nodeName === 'h6'||
+    nodeName === 'h7'
   ) {
     node = $createHeadingNode(nodeName);
     if (element.style !== null) {

@@ -205,6 +205,7 @@ export function InsertImageDialog({
   );
 }
 
+
 export default function ImagesPlugin({
   captionsEnabled,
 }: {

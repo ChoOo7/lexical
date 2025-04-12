@@ -28,21 +28,33 @@ export default function ImageResizer({
   onResizeStart,
   onResizeEnd,
   buttonRef,
+  buttonRoundRef,
+  buttonZoomRef,
   imageRef,
   maxWidth,
   editor,
   showCaption,
   setShowCaption,
+  imgRounded,
+  setImgRounded,
+  imgZoomable,
+  setImgZoomable,
   captionsEnabled,
 }: {
   editor: LexicalEditor;
   buttonRef: {current: null | HTMLButtonElement};
+  buttonRoundRef: {current: null | HTMLButtonElement};
+  buttonZoomRef: {current: null | HTMLButtonElement};
   imageRef: {current: null | HTMLElement};
   maxWidth?: number;
   onResizeEnd: (width: 'inherit' | number, height: 'inherit' | number) => void;
   onResizeStart: () => void;
   setShowCaption: (show: boolean) => void;
+  setImgRounded: (show: boolean) => void;
+  setImgZoomable: (show: boolean) => void;
   showCaption: boolean;
+  imgRounded: boolean;
+  imgZoomable: boolean;
   captionsEnabled: boolean;
 }): JSX.Element {
   const controlWrapperRef = useRef<HTMLDivElement>(null);
@@ -254,16 +266,36 @@ export default function ImageResizer({
   };
   return (
     <div ref={controlWrapperRef}>
-      {!showCaption && captionsEnabled && (
+      <div className="image-container-button">
+        {!showCaption && captionsEnabled && (
+          <button
+            className="image-caption-button"
+            ref={buttonRef}
+            onClick={() => {
+              setShowCaption(!showCaption);
+            }}>
+            Add Caption
+          </button>
+        )}
         <button
-          className="image-caption-button"
-          ref={buttonRef}
+          className="image-caption-button image-round-button"
+          ref={buttonRoundRef}
           onClick={() => {
-            setShowCaption(!showCaption);
+            console.log('clicked');
+            setImgRounded(!imgRounded);
           }}>
-          Add Caption
+            {imgRounded  ? 'Arrondi' : 'Rectangle'}
         </button>
-      )}
+        <button
+          className="image-caption-button image-zoom-button"
+          ref={buttonZoomRef}
+          onClick={() => {
+            console.log('clicked');
+            setImgZoomable(!imgZoomable);
+          }}>
+            {imgZoomable  ? 'Zoom' : 'No zoom'}
+        </button>
+      </div>
       <div
         className="image-resizer image-resizer-n"
         onPointerDown={(event) => {

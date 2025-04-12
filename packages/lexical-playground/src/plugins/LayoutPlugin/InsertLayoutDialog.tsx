@@ -17,12 +17,18 @@ import DropDown, {DropDownItem} from '../../ui/DropDown';
 import {INSERT_LAYOUT_COMMAND} from './LayoutPlugin';
 
 const LAYOUTS = [
-  {label: '2 columns (equal width)', value: '1fr 1fr'},
-  {label: '2 columns (25% - 75%)', value: '1fr 3fr'},
-  {label: '3 columns (equal width)', value: '1fr 1fr 1fr'},
-  {label: '3 columns (25% - 50% - 25%)', value: '1fr 2fr 1fr'},
-  {label: '4 columns (equal width)', value: '1fr 1fr 1fr 1fr'},
+  {label: '2 colonnes (largeur égale)', value: '1fr 1fr'},
+  {label: '2 colonnes (25% - 75%)', value: '1fr 3fr'},
+  {label: '2 colonnes (largeur égale), 2 colonnes sur mobile', value: '1fr 1fr 0fr'},
+
+  {label: '3 colonnes (largeur égale)', value: '1fr 1fr 1fr'},
+  {label: '3 colonnes (25% - 50% - 25%)', value: '1fr 2fr 1fr'},
+  {label: '4 colonnes (largeur égale)', value: '1fr 1fr 1fr 1fr'},
+
+  {label: '2 colonnes, image avec texte', value: '2fr 3fr 0fr'},
+  {label: '2 colonnes, image à droite avec texte', value: '3fr 2fr 0fr'},
 ];
+
 
 export default function InsertLayoutDialog({
   activeEditor,
